@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberRecon - Advanced Security Assessment Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(45deg, #00d4ff, #00ff88, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .security-badge {
+            display: inline-block;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        .scan-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .scan-panel h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e0;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e6ed;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .scan-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .scan-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-option:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .scan-option.selected {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .scan-option input[type="checkbox"] {
+            display: none;
+        }
+
+        .scan-option .option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .scan-option .option-title {
+            font-weight: 600;
+            color: #e0e6ed;
+        }
+
+        .scan-option .option-icon {
+            color: #00d4ff;
+            font-size: 1.2em;
+        }
+
+        .scan-option .option-description {
+            color: #a0aec0;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-header {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .results-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .result-panel {
+            display: none;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-panel.active {
+            display: block;
+        }
+
+        .result-content {
+            background: #0a0a0f;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid #00d4ff;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-running { background: #ffd700; }
+        .status-completed { background: #00ff88; }
+        .status-error { background: #ff6b6b; }
+
+        .tool-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 10px 20px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            border-radius: 6px;
+            color: #ff6b6b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .vulnerability-high { color: #ff6b6b; }
+        .vulnerability-medium { color: #ffd700; }
+        .vulnerability-low { color: #00ff88; }
+
+        .subdomain-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .subdomain-item {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2em; }
+            .scan-types { grid-template-columns: 1fr; }
+            .tool-buttons { justify-content: center; }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> CyberRecon</h1>
+            <p>Advanced Cybersecurity Reconnaissance Platform</p>
+  <!--    <div class="security-badge">
+                <i class="fas fa-exclamation-triangle"></i>
+                Authorized Security Testing Only
+            </div>
+-->        </div>
+
+        <div class="scan-panel">
+            <h2><i class="fas fa-crosshairs"></i> Target Configuration</h2>
+            
+            <div class="input-group">
+                <label for="target">Target IP Address or Domain Name</label>
+                <input type="text" id="target" class="input-field" placeholder="192.168.1.1 or example.com" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label>Select Reconnaissance Tools</label>
+                <div class="scan-types">
+                    <div class="scan-option" data-scan="nmap_basic">
+                        <input type="checkbox" id="nmap_basic">
+                        <div class="option-header">
+                            <span class="option-title">Nmap Basic Scan</span>
+                            <i class="fas fa-radar-dish option-icon"></i>
+                        </div>
+                        <div class="option-description">Service version detection and default scripts</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="nmap_aggressive">
+                        <input type="checkbox" id="nmap_aggressive">
+                        <div class="option-header">
+                            <span class="option-title">Nmap Aggressive</span>
+                            <i class="fas fa-fire option-icon"></i>
+                        </div>
+                        <div class="option-description">OS detection, version detection, script scanning</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="nmap_vuln">
+                        <input type="checkbox" id="nmap_vuln">
+                        <div class="option-header">
+                            <span class="option-title">Nmap Vulnerability</span>
+                            <i class="fas fa-bug option-icon"></i>
+                        </div>
+                        <div class="option-description">Vulnerability detection scripts</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="nikto">
+                        <input type="checkbox" id="nikto">
+                        <div class="option-header">
+                            <span class="option-title">Nikto Web Scan</span>
+                            <i class="fas fa-globe option-icon"></i>
+                        </div>
+                        <div class="option-description">Web server vulnerability assessment</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="sqlmap">
+                        <input type="checkbox" id="sqlmap">
+                        <div class="option-header">
+                            <span class="option-title">SQLMap Injection</span>
+                            <i class="fas fa-database option-icon"></i>
+                        </div>
+                        <div class="option-description">SQL injection vulnerability testing</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="subdomains">
+                        <input type="checkbox" id="subdomains">
+                        <div class="option-header">
+                            <span class="option-title">Subdomain Enum</span>
+                            <i class="fas fa-sitemap option-icon"></i>
+                        </div>
+                        <div class="option-description">Discover subdomains and DNS records</div>
+                    </div>
+
+                    <div class="scan-option" data-scan="shodan">
+                        <input type="checkbox" id="shodan">
+                        <div class="option-header">
+                            <span class="option-title">Shodan Lookup</span>
+                            <i class="fas fa-search option-icon"></i>
+                        </div>
+                        <div class="option-description">Internet-wide scan data from Shodan</div>
+                    </div>
+
+                                            <div class="scan-option" data-scan="virustotal">
+                        <input type="checkbox" id="virustotal">
+                        <div class="option-header">
+                            <span class="option-title">VirusTotal Check</span>
+                            <i class="fas fa-shield-virus option-icon"></i>
+                        </div>
+                        <div class="option-description">Malware and reputation analysis</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-buttons">
+                <button class="btn" id="startScan">
+                    <i class="fas fa-play"></i> Execute Reconnaissance
+                </button>
+                <button class="tool-btn" id="pingTest">
+                    <i class="fas fa-wifi"></i> Ping Test
+                </button>
+                <button class="tool-btn" id="whoisLookup">
+                    <i class="fas fa-info-circle"></i> WHOIS Lookup
+                </button>
+            </div>
+        </div>
+
+        <div class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <h3>Executing Security Reconnaissance...</h3>
+            <p id="scanStatus">Initializing scan procedures...</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2><i class="fas fa-chart-line"></i> Reconnaissance Results</h2>
+                <p id="scanInfo">Scan completed successfully</p>
+            </div>
+
+            <div class="results-tabs" id="resultsTabs">
+                <!-- Tabs will be generated dynamically -->
+            </div>
+
+            <div id="resultsContent">
+                <!-- Result panels will be generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CyberRecon {
+            constructor() {
+                this.currentScanId = null;
+                this.scanResults = {};
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.setupScanOptions();
+            }
+
+            bindEvents() {
+                document.getElementById('startScan').addEventListener('click', () => this.startScan());
+                document.getElementById('pingTest').addEventListener('click', () => this.pingTest());
+                document.getElementById('whoisLookup').addEventListener('click', () => this.whoisLookup());
+            }
+
+            setupScanOptions() {
+                document.querySelectorAll('.scan-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const checkbox = option.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        option.classList.toggle('selected', checkbox.checked);
+                    });
+                });
+            }
+
+            async startScan() {
+                const target = document.getElementById('target').value.trim();
+                if (!target) {
+                    this.showNotification('Please enter a target IP address or domain name', 'error');
+                    return;
+                }
+
+                const selectedScans = Array.from(document.querySelectorAll('.scan-option input:checked')).map(input => input.id);
+                if (selectedScans.length === 0) {
+                    this.showNotification('Please select at least one reconnaissance tool', 'error');
+                    return;
+                }
+
+                this.showLoading(true);
+                this.hideResults();
+
+                try {
+                    const response = await fetch('/api/scan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            target: target,
+                            scan_types: selectedScans
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    this.currentScanId = data.scan_id;
+                    this.pollScanStatus();
+
+                } catch (error) {
+                    this.showLoading(false);
+                    this.showNotification(`Scan failed: ${error.message}`, 'error');
+                }
+            }
+
+            async pollScanStatus() {
+                if (!this.currentScanId) return;
+
+                try {
+                    const response = await fetch(`/api/scan/${this.currentScanId}/status`);
+                    const data = await response.json();
+
+                    this.updateScanStatus(data);
+
+                    if (data.status === 'running') {
+                        setTimeout(() => this.pollScanStatus(), 2000);
+                    } else if (data.status === 'completed') {
+                        this.showLoading(false);
+                        this.displayResults(data);
+                    } else if (data.status === 'error') {
+                        this.showLoading(false);
+                        this.showNotification(`Scan error: ${data.error}`, 'error');
+                    }
+
+                } catch (error) {
+                    this.showLoading(false);
+                    this.showNotification(`Status check failed: ${error.message}`, 'error');
+                }
+            }
+
+            updateScanStatus(data) {
+                const statusElement = document.getElementById('scanStatus');
+                const completedTools = Object.keys(data.results || {}).length;
+                const totalTools = document.querySelectorAll('.scan-option input:checked').length;
+                
+                statusElement.innerHTML = `
+                    <span class="status-indicator status-${data.status}"></span>
+                    Scanning ${data.target} - ${completedTools}/${totalTools} tools completed
+                `;
+            }
+
+            displayResults(scanData) {
+                this.scanResults = scanData.results;
+                const resultsContainer = document.getElementById('resultsContainer');
+                const resultsTabs = document.getElementById('resultsTabs');
+                const resultsContent = document.getElementById('resultsContent');
+
+                // Update scan info
+                document.getElementById('scanInfo').innerHTML = `
+                    <span class="status-indicator status-completed"></span>
+                    Target: ${scanData.target} | 
+                    Started: ${new Date(scanData.started_at).toLocaleString()} | 
+                    Completed: ${new Date(scanData.completed_at).toLocaleString()}
+                `;
+
+                // Generate tabs
+                resultsTabs.innerHTML = '';
+                resultsContent.innerHTML = '';
+
+                let isFirst = true;
+                for (const [tool, result] of Object.entries(this.scanResults)) {
+                    // Create tab
+                    const tab = document.createElement('div');
+                    tab.className = `tab-btn ${isFirst ? 'active' : ''}`;
+                    tab.textContent = this.getToolDisplayName(tool);
+                    tab.dataset.tool = tool;
+                    tab.addEventListener('click', () => this.switchTab(tool));
+                    resultsTabs.appendChild(tab);
+
+                    // Create result panel
+                    const panel = document.createElement('div');
+                    panel.className = `result-panel ${isFirst ? 'active' : ''}`;
+                    panel.id = `panel-${tool}`;
+                    panel.innerHTML = this.formatResult(tool, result);
+                    resultsContent.appendChild(panel);
+
+                    isFirst = false;
+                }
+
+                resultsContainer.style.display = 'block';
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            switchTab(tool) {
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tool === tool);
+                });
+
+                // Update panels
+                document.querySelectorAll('.result-panel').forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `panel-${tool}`);
+                });
+            }
+
+            formatResult(tool, result) {
+                if (!result.success) {
+                    return `<div class="result-content" style="color: #ff6b6b;">
+                        <i class="fas fa-exclamation-triangle"></i> Error: ${result.error}
+                    </div>`;
+                }
+
+                switch (tool) {
+                    case 'subdomains':
+                        return this.formatSubdomains(result);
+                    case 'shodan':
+                        return this.formatShodan(result);
+                    case 'virustotal':
+                        return this.formatVirusTotal(result);
+                    case 'nmap_basic':
+                    case 'nmap_aggressive':
+                    case 'nmap_vuln':
+                        return this.formatNmapResults(result);
+                    case 'nikto':
+                        return this.formatNiktoResults(result);
+                    case 'sqlmap':
+                        return this.formatSQLMapResults(result);
+                    default:
+                        return `<div class="result-content">${this.escapeHtml(result.output || 'No output available')}</div>`;
+                }
+            }
+
+            formatNmapResults(result) {
+                const output = result.output || '';
+                const lines = output.split('\n');
+                
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Summary section
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-left: 3px solid #00d4ff; border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-chart-bar"></i> Scan Summary</h3>';
+                
+                // Extract host status
+                const hostUp = output.match(/Host is up/i);
+                if (hostUp) {
+                    formatted += '<p style="margin: 5px 0; color: #00ff88;"><i class="fas fa-check-circle"></i> <strong>Status:</strong> Host is Online</p>';
+                }
+                
+                // Extract latency
+                const latency = output.match(/\((.+?s) latency\)/);
+                if (latency) {
+                    formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><i class="fas fa-clock"></i> <strong>Response Time:</strong> ${latency[1]}</p>`;
+                }
+                
+                formatted += '</div>';
+                
+                // Open ports section
+                const portLines = lines.filter(line => line.match(/^\d+\/\w+\s+open/));
+                if (portLines.length > 0) {
+                    formatted += '<div style="margin-bottom: 25px;">';
+                    formatted += '<h3 style="margin: 0 0 15px 0; color: #00d4ff;"><i class="fas fa-network-wired"></i> Open Ports & Services</h3>';
+                    formatted += '<table style="width: 100%; border-collapse: collapse;">';
+                    formatted += '<thead><tr style="background: rgba(0, 212, 255, 0.2);">';
+                    formatted += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #00d4ff;">Port</th>';
+                    formatted += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #00d4ff;">State</th>';
+                    formatted += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #00d4ff;">Service</th>';
+                    formatted += '<th style="padding: 10px; text-align: left; border-bottom: 2px solid #00d4ff;">Version</th>';
+                    formatted += '</tr></thead><tbody>';
+                    
+                    portLines.forEach(line => {
+                        const parts = line.trim().split(/\s+/);
+                        if (parts.length >= 3) {
+                            const port = parts[0];
+                            const state = parts[1];
+                            const service = parts[2] || 'unknown';
+                            const version = parts.slice(3).join(' ') || 'N/A';
+                            
+                            formatted += '<tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">';
+                            formatted += `<td style="padding: 10px; color: #00ff88; font-weight: bold;">${this.escapeHtml(port)}</td>`;
+                            formatted += `<td style="padding: 10px;"><span style="color: #00ff88; background: rgba(0, 255, 136, 0.1); padding: 3px 8px; border-radius: 3px;">${this.escapeHtml(state)}</span></td>`;
+                            formatted += `<td style="padding: 10px; color: #e0e6ed;">${this.escapeHtml(service)}</td>`;
+                            formatted += `<td style="padding: 10px; color: #a0aec0; font-size: 0.9em;">${this.escapeHtml(version)}</td>`;
+                            formatted += '</tr>';
+                        }
+                    });
+                    
+                    formatted += '</tbody></table></div>';
+                } else {
+                    formatted += '<div style="padding: 15px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 5px; margin-bottom: 20px;">';
+                    formatted += '<p style="margin: 0; color: #ff6b6b;"><i class="fas fa-info-circle"></i> No open ports detected or scan did not complete successfully</p>';
+                    formatted += '</div>';
+                }
+                
+                // OS Detection
+                const osMatch = output.match(/OS details?: (.+)/i);
+                if (osMatch) {
+                    formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 255, 136, 0.1); border-left: 3px solid #00ff88; border-radius: 5px;">';
+                    formatted += '<h3 style="margin: 0 0 10px 0; color: #00ff88;"><i class="fas fa-desktop"></i> Operating System</h3>';
+                    formatted += `<p style="margin: 0; color: #e0e6ed;">${this.escapeHtml(osMatch[1])}</p>`;
+                    formatted += '</div>';
+                }
+                
+                // Vulnerabilities section
+                const vulnLines = lines.filter(line => line.includes('VULNERABLE') || line.includes('CVE-'));
+                if (vulnLines.length > 0) {
+                    formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 5px;">';
+                    formatted += '<h3 style="margin: 0 0 10px 0; color: #ff6b6b;"><i class="fas fa-exclamation-triangle"></i> Potential Vulnerabilities</h3>';
+                    formatted += '<ul style="margin: 10px 0; padding-left: 20px;">';
+                    vulnLines.forEach(line => {
+                        formatted += `<li style="margin: 5px 0; color: #e0e6ed;">${this.escapeHtml(line.trim())}</li>`;
+                    });
+                    formatted += '</ul></div>';
+                }
+                
+                // Raw output (collapsible)
+                formatted += '<details style="margin-top: 20px;"><summary style="cursor: pointer; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; color: #00d4ff;"><i class="fas fa-code"></i> View Raw Output</summary>';
+                formatted += `<div class="result-content" style="margin-top: 10px;">${this.escapeHtml(output)}</div>`;
+                formatted += '</details>';
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            formatNiktoResults(result) {
+                const output = result.output || '';
+                const lines = output.split('\n');
+                
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Summary
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-left: 3px solid #00d4ff; border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-shield-alt"></i> Web Vulnerability Scan Summary</h3>';
+                
+                const targetMatch = output.match(/Target IP:\s+(.+)/);
+                const portMatch = output.match(/Target Port:\s+(.+)/);
+                
+                if (targetMatch) {
+                    formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><strong>Target:</strong> ${this.escapeHtml(targetMatch[1])}</p>`;
+                }
+                if (portMatch) {
+                    formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><strong>Port:</strong> ${this.escapeHtml(portMatch[1])}</p>`;
+                }
+                
+                formatted += '</div>';
+                
+                // Findings
+                const findings = lines.filter(line => line.includes('OSVDB') || line.includes('+'));
+                if (findings.length > 0) {
+                    formatted += '<div style="margin-bottom: 25px;">';
+                    formatted += '<h3 style="margin: 0 0 15px 0; color: #ffd700;"><i class="fas fa-bug"></i> Security Findings</h3>';
+                    
+                    findings.forEach(finding => {
+                        if (finding.trim().startsWith('+')) {
+                            const severity = finding.toLowerCase().includes('vulnerable') ? 'high' : 'medium';
+                            const color = severity === 'high' ? '#ff6b6b' : '#ffd700';
+                            
+                            formatted += `<div style="margin: 10px 0; padding: 12px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid ${color}; border-radius: 5px;">`;
+                            formatted += `<p style="margin: 0; color: #e0e6ed;">${this.escapeHtml(finding.substring(1).trim())}</p>`;
+                            formatted += '</div>';
+                        }
+                    });
+                    formatted += '</div>';
+                } else {
+                    formatted += '<div style="padding: 15px; background: rgba(0, 255, 136, 0.1); border-left: 3px solid #00ff88; border-radius: 5px; margin-bottom: 20px;">';
+                    formatted += '<p style="margin: 0; color: #00ff88;"><i class="fas fa-check-circle"></i> No significant vulnerabilities detected</p>';
+                    formatted += '</div>';
+                }
+                
+                // Raw output
+                formatted += '<details style="margin-top: 20px;"><summary style="cursor: pointer; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; color: #00d4ff;"><i class="fas fa-code"></i> View Raw Output</summary>';
+                formatted += `<div class="result-content" style="margin-top: 10px;">${this.escapeHtml(output)}</div>`;
+                formatted += '</details>';
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            formatSQLMapResults(result) {
+                const output = result.output || '';
+                
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Check for SQL injection
+                const vulnerable = output.toLowerCase().includes('vulnerable') || output.toLowerCase().includes('injectable');
+                
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; ';
+                formatted += vulnerable ? 'background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b;' : 'background: rgba(0, 255, 136, 0.1); border-left: 3px solid #00ff88;';
+                formatted += ' border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; ';
+                formatted += vulnerable ? 'color: #ff6b6b;' : 'color: #00ff88;';
+                formatted += '"><i class="fas fa-database"></i> SQL Injection Test Result</h3>';
+                
+                if (vulnerable) {
+                    formatted += '<p style="margin: 0; color: #ff6b6b; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> POTENTIAL SQL INJECTION VULNERABILITY DETECTED!</p>';
+                    formatted += '<p style="margin: 10px 0 0 0; color: #e0e6ed;">The target may be vulnerable to SQL injection attacks. Immediate remediation recommended.</p>';
+                } else {
+                    formatted += '<p style="margin: 0; color: #00ff88;"><i class="fas fa-check-circle"></i> No SQL injection vulnerabilities detected</p>';
+                    formatted += '<p style="margin: 10px 0 0 0; color: #a0aec0;">The tested parameters appear to be properly sanitized.</p>';
+                }
+                
+                formatted += '</div>';
+                
+                // Database information
+                const dbMatch = output.match(/available databases.*?\[(\d+)\]:/i);
+                if (dbMatch) {
+                    formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700; border-radius: 5px;">';
+                    formatted += '<h3 style="margin: 0 0 10px 0; color: #ffd700;"><i class="fas fa-info-circle"></i> Database Information</h3>';
+                    formatted += `<p style="margin: 0; color: #e0e6ed;"><strong>Databases Found:</strong> ${dbMatch[1]}</p>`;
+                    formatted += '</div>';
+                }
+                
+                // Raw output
+                formatted += '<details style="margin-top: 20px;"><summary style="cursor: pointer; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; color: #00d4ff;"><i class="fas fa-code"></i> View Raw Output</summary>';
+                formatted += `<div class="result-content" style="margin-top: 10px;">${this.escapeHtml(output)}</div>`;
+                formatted += '</details>';
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            formatSubdomains(result) {
+                if (!result.subdomains || result.subdomains.length === 0) {
+                    return `<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">
+                        <div style="padding: 15px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700; border-radius: 5px;">
+                            <p style="margin: 0; color: #ffd700;"><i class="fas fa-info-circle"></i> No subdomains discovered for this target</p>
+                        </div>
+                    </div>`;
+                }
+
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Summary card
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 255, 136, 0.1); border-left: 3px solid #00ff88; border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; color: #00ff88;"><i class="fas fa-sitemap"></i> Subdomain Discovery Summary</h3>';
+                formatted += `<p style="margin: 0; color: #e0e6ed; font-size: 1.1em;"><strong>Total Subdomains Found:</strong> ${result.subdomains.length}</p>`;
+                formatted += '<p style="margin: 10px 0 0 0; color: #a0aec0; font-size: 0.9em;">Each subdomain represents a potential entry point to the target system</p>';
+                formatted += '</div>';
+                
+                // Subdomain cards with grouping
+                formatted += '<div style="margin-bottom: 20px;">';
+                formatted += '<h3 style="margin: 0 0 15px 0; color: #00d4ff;"><i class="fas fa-list"></i> Discovered Subdomains</h3>';
+                formatted += '<div class="subdomain-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;">';
+                
+                result.subdomains.forEach((subdomain, index) => {
+                    formatted += `<div class="subdomain-item" style="background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 8px; padding: 12px; transition: all 0.3s ease;">`;
+                    formatted += `<div style="display: flex; align-items: center; gap: 8px;">`;
+                    formatted += `<i class="fas fa-globe" style="color: #00d4ff;"></i>`;
+                    formatted += `<span style="color: #e0e6ed; font-size: 0.95em; word-break: break-all;">${this.escapeHtml(subdomain)}</span>`;
+                    formatted += `</div>`;
+                    formatted += `</div>`;
+                });
+                
+                formatted += '</div></div>';
+                
+                // Tips section
+                formatted += '<div style="padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 5px; border: 1px dashed rgba(0, 212, 255, 0.3);">';
+                formatted += '<h4 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-lightbulb"></i> Next Steps</h4>';
+                formatted += '<ul style="margin: 0; padding-left: 20px; color: #a0aec0;">';
+                formatted += '<li style="margin: 5px 0;">Test each subdomain individually for security issues</li>';
+                formatted += '<li style="margin: 5px 0;">Check for forgotten or staging environments</li>';
+                formatted += '<li style="margin: 5px 0;">Verify SSL/TLS certificates for each subdomain</li>';
+                formatted += '<li style="margin: 5px 0;">Look for exposed admin panels or sensitive information</li>';
+                formatted += '</ul>';
+                formatted += '</div>';
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            formatShodan(result) {
+                if (!result.data) {
+                    return `<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">
+                        <div style="padding: 15px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700; border-radius: 5px;">
+                            <p style="margin: 0; color: #ffd700;"><i class="fas fa-info-circle"></i> No Shodan data available. This may require a valid API key.</p>
+                        </div>
+                    </div>`;
+                }
+
+                const data = result.data;
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Header
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-left: 3px solid #00d4ff; border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-satellite-dish"></i> Shodan Intelligence Report</h3>';
+                formatted += '<p style="margin: 0; color: #a0aec0;">Internet-wide scan data and vulnerability information</p>';
+                formatted += '</div>';
+                
+                // Key information cards
+                formatted += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">';
+                
+                // IP Address card
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">';
+                formatted += '<div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;"><i class="fas fa-network-wired"></i> IP ADDRESS</div>';
+                formatted += `<div style="color: #e0e6ed; font-size: 1.2em; font-weight: bold;">${data.ip_str || 'N/A'}</div>`;
+                formatted += '</div>';
+                
+                // Organization card
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">';
+                formatted += '<div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;"><i class="fas fa-building"></i> ORGANIZATION</div>';
+                formatted += `<div style="color: #e0e6ed; font-size: 1.2em; font-weight: bold;">${data.org || 'N/A'}</div>`;
+                formatted += '</div>';
+                
+                // Country card
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">';
+                formatted += '<div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;"><i class="fas fa-globe-americas"></i> LOCATION</div>';
+                formatted += `<div style="color: #e0e6ed; font-size: 1.2em; font-weight: bold;">${data.country_name || 'N/A'}</div>`;
+                formatted += '</div>';
+                
+                // ISP card
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">';
+                formatted += '<div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;"><i class="fas fa-server"></i> ISP</div>';
+                formatted += `<div style="color: #e0e6ed; font-size: 1.2em; font-weight: bold;">${data.isp || 'N/A'}</div>`;
+                formatted += '</div>';
+                
+                formatted += '</div>';
+                
+                // Open Ports section
+                if (data.ports && data.ports.length > 0) {
+                    formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 255, 136, 0.1); border-left: 3px solid #00ff88; border-radius: 5px;">';
+                    formatted += '<h4 style="margin: 0 0 10px 0; color: #00ff88;"><i class="fas fa-door-open"></i> Open Ports Detected</h4>';
+                    formatted += '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+                    data.ports.forEach(port => {
+                        formatted += `<span style="padding: 6px 12px; background: rgba(0, 255, 136, 0.2); border: 1px solid #00ff88; border-radius: 5px; color: #00ff88; font-weight: bold;">${port}</span>`;
+                    });
+                    formatted += '</div>';
+                    formatted += `<p style="margin: 10px 0 0 0; color: #a0aec0; font-size: 0.9em;">Total: ${data.ports.length} open port(s)</p>`;
+                    formatted += '</div>';
+                }
+                
+                // Vulnerabilities section
+                if (data.vulns && Object.keys(data.vulns).length > 0) {
+                    formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 5px;">';
+                    formatted += '<h4 style="margin: 0 0 10px 0; color: #ff6b6b;"><i class="fas fa-exclamation-triangle"></i> Known Vulnerabilities</h4>';
+                    formatted += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+                    Object.keys(data.vulns).forEach(cve => {
+                        formatted += `<div style="padding: 8px 12px; background: rgba(255, 107, 107, 0.2); border-radius: 5px;">`;
+                        formatted += `<span style="color: #ff6b6b; font-weight: bold;">${cve}</span>`;
+                        formatted += `</div>`;
+                    });
+                    formatted += '</div>';
+                    formatted += '</div>';
+                }
+                
+                // Last update
+                if (data.last_update) {
+                    formatted += '<div style="padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 5px; text-align: center;">';
+                    formatted += `<span style="color: #a0aec0; font-size: 0.9em;"><i class="fas fa-clock"></i> Last Updated: ${data.last_update}</span>`;
+                    formatted += '</div>';
+                }
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            formatVirusTotal(result) {
+                if (!result.data) {
+                    return `<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">
+                        <div style="padding: 15px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700; border-radius: 5px;">
+                            <p style="margin: 0; color: #ffd700;"><i class="fas fa-info-circle"></i> No VirusTotal data available. This may require a valid API key.</p>
+                        </div>
+                    </div>`;
+                }
+
+                const data = result.data.data;
+                const attributes = data.attributes;
+                const stats = attributes.last_analysis_stats;
+                
+                let formatted = '<div style="padding: 20px; background: #0a0a0f; border-radius: 8px;">';
+                
+                // Header
+                formatted += '<div style="margin-bottom: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-left: 3px solid #00d4ff; border-radius: 5px;">';
+                formatted += '<h3 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-shield-virus"></i> VirusTotal Security Analysis</h3>';
+                formatted += '<p style="margin: 0; color: #a0aec0;">Malware detection and reputation data from 70+ antivirus engines</p>';
+                formatted += '</div>';
+                
+                // Overall risk assessment
+                const malicious = stats.malicious || 0;
+                const suspicious = stats.suspicious || 0;
+                const totalRisk = malicious + suspicious;
+                
+                let riskLevel, riskColor, riskIcon;
+                if (malicious > 0) {
+                    riskLevel = 'HIGH RISK';
+                    riskColor = '#ff6b6b';
+                    riskIcon = 'fa-exclamation-triangle';
+                } else if (suspicious > 0) {
+                    riskLevel = 'MEDIUM RISK';
+                    riskColor = '#ffd700';
+                    riskIcon = 'fa-exclamation-circle';
+                } else {
+                    riskLevel = 'LOW RISK';
+                    riskColor = '#00ff88';
+                    riskIcon = 'fa-check-circle';
+                }
+                
+                formatted += `<div style="margin-bottom: 25px; padding: 20px; background: rgba(${riskColor === '#ff6b6b' ? '255, 107, 107' : riskColor === '#ffd700' ? '255, 215, 0' : '0, 255, 136'}, 0.1); border: 2px solid ${riskColor}; border-radius: 8px; text-align: center;">`;
+                formatted += `<div style="font-size: 2em; color: ${riskColor}; margin-bottom: 10px;"><i class="fas ${riskIcon}"></i></div>`;
+                formatted += `<div style="font-size: 1.5em; font-weight: bold; color: ${riskColor}; margin-bottom: 10px;">${riskLevel}</div>`;
+                formatted += `<div style="color: #e0e6ed;">Overall Security Assessment</div>`;
+                formatted += '</div>';
+                
+                // Detection statistics
+                formatted += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">';
+                
+                // Malicious
+                formatted += '<div style="padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; border: 1px solid #ff6b6b; text-align: center;">';
+                formatted += '<div style="font-size: 2em; font-weight: bold; color: #ff6b6b;">' + malicious + '</div>';
+                formatted += '<div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;"><i class="fas fa-virus"></i> MALICIOUS</div>';
+                formatted += '</div>';
+                
+                // Suspicious
+                formatted += '<div style="padding: 15px; background: rgba(255, 215, 0, 0.1); border-radius: 8px; border: 1px solid #ffd700; text-align: center;">';
+                formatted += '<div style="font-size: 2em; font-weight: bold; color: #ffd700;">' + (stats.suspicious || 0) + '</div>';
+                formatted += '<div style="color: #ffd700; font-size: 0.9em; margin-top: 5px;"><i class="fas fa-question-circle"></i> SUSPICIOUS</div>';
+                formatted += '</div>';
+                
+                // Clean
+                formatted += '<div style="padding: 15px; background: rgba(0, 255, 136, 0.1); border-radius: 8px; border: 1px solid #00ff88; text-align: center;">';
+                formatted += '<div style="font-size: 2em; font-weight: bold; color: #00ff88;">' + (stats.harmless || 0) + '</div>';
+                formatted += '<div style="color: #00ff88; font-size: 0.9em; margin-top: 5px;"><i class="fas fa-check"></i> CLEAN</div>';
+                formatted += '</div>';
+                
+                // Undetected
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">';
+                formatted += '<div style="font-size: 2em; font-weight: bold; color: #a0aec0;">' + (stats.undetected || 0) + '</div>';
+                formatted += '<div style="color: #a0aec0; font-size: 0.9em; margin-top: 5px;"><i class="fas fa-circle"></i> UNDETECTED</div>';
+                formatted += '</div>';
+                
+                formatted += '</div>';
+                
+                // Additional information
+                formatted += '<div style="padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 5px;">';
+                formatted += '<h4 style="margin: 0 0 10px 0; color: #00d4ff;"><i class="fas fa-info-circle"></i> Scan Details</h4>';
+                formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><strong>Reputation Score:</strong> ${attributes.reputation || 0}</p>`;
+                formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><strong>Last Analysis:</strong> ${new Date(attributes.last_analysis_date * 1000).toLocaleString()}</p>`;
+                formatted += `<p style="margin: 5px 0; color: #e0e6ed;"><strong>Total Engines:</strong> ${Object.values(stats).reduce((a, b) => a + b, 0)}</p>`;
+                formatted += '</div>';
+                
+                formatted += '</div>';
+                return formatted;
+            }
+
+            async pingTest() {
+                const target = document.getElementById('target').value.trim();
+                if (!target) {
+                    this.showNotification('Please enter a target first', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/tools/ping', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ target })
+                    });
+
+                    const data = await response.json();
+                    this.showToolResult('Ping Test Results', data.output || data.error);
+                } catch (error) {
+                    this.showNotification(`Ping failed: ${error.message}`, 'error');
+                }
+            }
+
+            async whoisLookup() {
+                const target = document.getElementById('target').value.trim();
+                if (!target) {
+                    this.showNotification('Please enter a target first', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/tools/whois', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ target })
+                    });
+
+                    const data = await response.json();
+                    this.showToolResult('WHOIS Lookup Results', data.output || data.error);
+                } catch (error) {
+                    this.showNotification(`WHOIS lookup failed: ${error.message}`, 'error');
+                }
+            }
+
+            showToolResult(title, content) {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+                    align-items: center; justify-content: center; padding: 20px;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: #1a1a2e; border-radius: 15px; padding: 30px; 
+                                max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto;
+                                border: 1px solid rgba(0,212,255,0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: #00d4ff; margin: 0;">${title}</h3>
+                            <button onclick="this.closest('.modal').remove()" 
+                                    style="background: none; border: none; color: #ff6b6b; 
+                                           font-size: 24px; cursor: pointer;">×</button>
+                        </div>
+                        <div class="result-content">${this.escapeHtml(content)}</div>
+                    </div>
+                `;
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+            }
+
+            getToolDisplayName(tool) {
+                const names = {
+                    'nmap_basic': 'Nmap Basic',
+                    'nmap_aggressive': 'Nmap Aggressive',
+                    'nmap_vuln': 'Nmap Vulnerabilities',
+                    'nikto': 'Nikto Web Scan',
+                    'sqlmap': 'SQLMap',
+                    'subdomains': 'Subdomains',
+                    'shodan': 'Shodan',
+                    'virustotal': 'VirusTotal'
+                };
+                return names[tool] || tool;
+            }
+
+            showLoading(show) {
+                document.getElementById('loadingSection').classList.toggle('show', show);
+                document.getElementById('startScan').disabled = show;
+            }
+
+            hideResults() {
+                document.getElementById('resultsContainer').style.display = 'none';
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 1000;
+                    padding: 15px 20px; border-radius: 8px; color: white;
+                    background: ${type === 'error' ? '#ff6b6b' : '#00d4ff'};
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    animation: slideIn 0.3s ease;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new CyberRecon();
+        });
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
